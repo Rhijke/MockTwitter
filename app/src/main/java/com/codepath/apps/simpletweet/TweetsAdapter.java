@@ -4,6 +4,7 @@ package com.codepath.apps.simpletweet;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.media.Image;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,13 @@ import com.codepath.apps.simpletweet.models.Tweet;
 
 import org.w3c.dom.Text;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+
+import static android.text.format.DateUtils.SECOND_IN_MILLIS;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     Context context;
@@ -67,17 +74,31 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
+        TextView tvCreatedAt;
 
         public ViewHolder(@NonNull View itemView ) {
             super(itemView);
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
+            tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
+            String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+            SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+            sf.setLenient(true);
+            String relativeDate = "";
+            try {
+                long dateMillis = sf.parse(tweet.createAt).getTime();
+                relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                        System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            tvCreatedAt.setText(relativeDate);
             Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
         }
     }
