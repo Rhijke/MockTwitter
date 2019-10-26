@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate.models;
+package com.codepath.apps.simpletweet.models;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
