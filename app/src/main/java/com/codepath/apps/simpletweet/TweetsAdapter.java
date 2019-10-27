@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.media.Image;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             try {
                 long dateMillis = sf.parse(tweet.createAt).getTime();
                 relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                        System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+                        System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString()
+                        .replace("hours", "hr")
+                        .replace("minutes", "m")
+                        .replace("minute", "m")
+                        .replace("hour", "hr");
+                Log.i("Tweet", relativeDate);
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
