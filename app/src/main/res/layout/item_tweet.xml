@@ -44,9 +44,7 @@
         android:layout_alignBottom="@+id/tvScreenName"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="150dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/tvScreenName"
         android:text="TextView" />
 </RelativeLayout>
