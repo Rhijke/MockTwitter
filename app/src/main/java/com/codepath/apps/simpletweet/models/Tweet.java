@@ -3,13 +3,16 @@ package com.codepath.apps.simpletweet.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Parcel
 public class Tweet {
     public String body, createAt;
     public User user;
+
+    public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();

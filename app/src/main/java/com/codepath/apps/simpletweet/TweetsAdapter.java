@@ -70,6 +70,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    public void add(Tweet tweet) {
+        tweets.add(0, tweet);
+        notifyDataSetChanged();
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivProfileImage;

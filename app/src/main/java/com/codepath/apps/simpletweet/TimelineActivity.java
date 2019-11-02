@@ -1,5 +1,6 @@
 package com.codepath.apps.simpletweet;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codepath.apps.simpletweet.models.Tweet;
+import com.codepath.apps.simpletweet.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +33,7 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
 
-    public static final int REQUEST_CODE = -1;
+    public static final int REQUEST_CODE = 1990;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -79,6 +82,17 @@ public class TimelineActivity extends AppCompatActivity {
         Intent i = new Intent(this, ComposeActivity.class);
         startActivityForResult(i, REQUEST_CODE);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            Tweet tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
+            adapter.add(tweet);
+        }
+    }
+
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
