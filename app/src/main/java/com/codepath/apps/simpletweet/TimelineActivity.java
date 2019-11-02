@@ -5,9 +5,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codepath.apps.simpletweet.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -33,6 +35,7 @@ public class TimelineActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.login, menu);
         return true;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,13 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
         populateHomeTimeline();
+    }
+
+    public void onLogout(MenuItem mi) {
+        Log.d("Logout", "Clicked logout");
+        client.clearAccessToken();
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
     }
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
