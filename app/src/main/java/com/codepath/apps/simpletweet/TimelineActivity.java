@@ -29,10 +29,12 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
+
+    public static final int REQUEST_CODE = -1;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.login, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -71,6 +73,11 @@ public class TimelineActivity extends AppCompatActivity {
         client.clearAccessToken();
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
+    }
+    public void onCompose(MenuItem mi) {
+        Log.d("Tweet", "Compose Tweet clicked");
+        Intent i = new Intent(this, ComposeActivity.class);
+        startActivityForResult(i, REQUEST_CODE);
     }
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
