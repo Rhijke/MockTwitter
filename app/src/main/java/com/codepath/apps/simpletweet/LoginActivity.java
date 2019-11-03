@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.codepath.apps.simpletweet.models.SampleModel;
 import com.codepath.apps.simpletweet.models.SampleModelDao;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
