@@ -14,8 +14,6 @@ public class TweetWithUser {
     Tweet tweet;
 
     public static List<Tweet>   getTweetList(List<TweetWithUser> tweetWithUsers) {
-        Log.i("TweetWithUser", "Called");
-
         List<Tweet> tweets = new ArrayList<>();
         for (int i =0; i < tweetWithUsers.size(); i++){
             Tweet tweet = tweetWithUsers.get(i).tweet;

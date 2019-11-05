@@ -141,9 +141,6 @@ public class TimelineActivity extends AppCompatActivity {
                             Log.i("DB", "Save data to DB");
                             // Insert users
                             List<User> usersFromNetwork = User.fromJsonArray(tweetsFromNetwork);
-                            for (User user: usersFromNetwork) {
-                                System.out.println(user.name);
-                            }
                             tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
                             // Insert tweets
                             tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
