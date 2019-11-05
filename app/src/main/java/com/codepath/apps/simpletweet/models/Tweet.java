@@ -1,5 +1,9 @@
 package com.codepath.apps.simpletweet.models;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,15 +11,24 @@ import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
-@Parcel
-public class Tweet {
-    public String body, createAt;
-    public User user;
 
+@Parcel
+@Entity
+public class Tweet {
+    @ColumnInfo
+    public String body, createAt;
+    @ColumnInfo
+    public User user;
+    @ColumnInfo
+    @PrimaryKey
+    public long id;
+
+    // empty contructor needed by the Parceler library
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
+        tweet.id = jsonObject.getLong("id");
         tweet.body = jsonObject.getString("text");
         tweet.createAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
