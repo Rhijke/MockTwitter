@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -18,6 +19,8 @@ import android.view.View;
 
 
 import com.codepath.apps.simpletweet.models.Tweet;
+import com.codepath.apps.simpletweet.models.TweetDao;
+import com.codepath.apps.simpletweet.models.TweetWithUser;
 import com.codepath.apps.simpletweet.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -37,6 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweets;
     List<Tweet> tweets;
     TweetsAdapter adapter;
+    TweetDao tweetDao;
 
     public static final int REQUEST_CODE = 1990;
     @Override
@@ -58,6 +62,9 @@ public class TimelineActivity extends AppCompatActivity {
 
 
         client = TwitterApplication.getRestClient(this);
+        // Room database
+        tweetDao = ((TwitterApplication) getApplicationContext()).getMyDatabase().tweetDao();
+
         rvTweets = findViewById(R.id.rvTweets);
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
@@ -78,6 +85,19 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        // Query for existing tweets in the DB
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("DB", "DATABSE");
+                List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
+                List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
+
+                adapter.clear();
+                adapter.addAll(tweetsFromDB);
+            }
+        });
         populateHomeTimeline();
     }
 
@@ -110,9 +130,25 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.i(TAG, "Success " + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
+                    final List<Tweet> tweetsFromNetwork =Tweet.fromJsonArray(jsonArray);
                     adapter.clear();
-                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
+                    adapter.addAll(tweetsFromNetwork);
                     swipeContainer.setRefreshing(false);
+                    // Query for existing tweets in the DB
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i("DB", "Save data to DB");
+                            // Insert users
+                            List<User> usersFromNetwork = User.fromJsonArray(tweetsFromNetwork);
+                            for (User user: usersFromNetwork) {
+                                System.out.println(user.name);
+                            }
+                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                            // Insert tweets
+                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        }
+                    });
                 } catch (JSONException e) {
                     Log.e(TAG, "json exception", e);
                 }

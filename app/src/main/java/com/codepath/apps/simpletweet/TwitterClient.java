@@ -44,7 +44,7 @@ public class TwitterClient extends OAuthBaseClient {
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("format", "json");
-		params.put("count", 25);
+		params.put("count", 300);
 		params.put("since_id", 1);
 		client.get(apiUrl, params, handler);
 	}

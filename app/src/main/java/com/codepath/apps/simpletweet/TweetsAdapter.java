@@ -108,8 +108,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                         .replace("minutes", "m")
                         .replace("minute", "m")
                         .replace("hour", "hr");
-                Log.i("Tweet", relativeDate);
-
             } catch (ParseException e) {
                 e.printStackTrace();
             }

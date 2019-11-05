@@ -2,6 +2,8 @@ package com.codepath.apps.simpletweet.models;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import org.json.JSONArray;
@@ -13,15 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Parcel
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity=User.class, parentColumns="id", childColumns="userId"))
 public class Tweet {
     @ColumnInfo
     public String body, createAt;
-    @ColumnInfo
+    @Ignore
     public User user;
     @ColumnInfo
     @PrimaryKey
     public long id;
+    @ColumnInfo
+    public long userId;
 
     // empty contructor needed by the Parceler library
     public Tweet() {}
@@ -31,7 +35,9 @@ public class Tweet {
         tweet.id = jsonObject.getLong("id");
         tweet.body = jsonObject.getString("text");
         tweet.createAt = jsonObject.getString("created_at");
-        tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        User user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.user = user;
+        tweet.userId = user.id;
         return tweet;
     }
 
