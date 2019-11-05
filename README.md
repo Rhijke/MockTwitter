@@ -16,7 +16,7 @@ The following **required** functionality is completed:
 The following **optional** features are implemented:
 
 - [X] User can **pull down to refresh tweets timeline**
-- [ ] User is using **"Twitter branded" colors and styles**
+- [X] User is using **"Twitter branded" colors and styles**
 - [ ] User sees an **indeterminate progress indicator** when any background or network task is happening
 - [ ] User can **select "reply" from detail view to respond to a tweet**
   - [ ] User that wrote the original tweet is **automatically "@" replied in compose**
@@ -28,9 +28,9 @@ The following **bonus** features are implemented:
 
 - [X] User can view more tweets as they scroll with infinite pagination
 - [ ] Compose tweet functionality is build using modal overlay
-- [ ] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.org/android/Using-Parceler).
+- [X] Use Parcelable instead of Serializable using the popular [Parceler library](http://guides.codepath.org/android/Using-Parceler).
 - [ ] Replace all icon drawables and other static image assets with [vector drawables](http://guides.codepath.org/android/Drawables#vector-drawables) where appropriate.
-- [ ] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
+- [X] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 - [ ] User can view following / followers list through any profile they view.
 - [ ] User can see embedded image media within the tweet detail view
 - [ ] Use the popular ButterKnife annotation library to reduce view boilerplate.
@@ -43,30 +43,11 @@ Here's a walkthrough of implemented user stories:
 
 <img src='https://github.com/Rhijke/MockTwitter/blob/master/walkthroughpart4.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
-
 
 ## Open-source libraries used
 
 - [Android Async HTTP](https://github.com/codepath/CPAsyncHttpClient) - Simple asynchronous HTTP requests with JSON parsing
 - [Glide](https://github.com/bumptech/glide) - Image loading and caching library for Android
-
-## License
-
-    Copyright [2019] [Kaerah Lopez]
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
 
 ## User Stories
 
@@ -106,19 +87,3 @@ Here's a walkthrough of implemented user stories:
 
 - [Android Async HTTP](https://github.com/codepath/CPAsyncHttpClient) - Simple asynchronous HTTP requests with JSON parsing
 - [Glide](https://github.com/bumptech/glide) - Image loading and caching library for Android
-
-## License
-
-    Copyright [2019] [Kaerah Lopez]
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
