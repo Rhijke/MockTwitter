@@ -61,4 +61,24 @@
         android:layout_marginBottom="0dp"
         android:fontFamily="@font/montserrat"
         android:text="TextView" />
+
+    <Button
+        android:id="@+id/rtBtn"
+        android:background="@drawable/states_retweet_btn"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="2dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/rtBtn"
+        android:layout_alignParentStart="true"
+        android:background="?android:attr/listDivider" />
 </RelativeLayout>

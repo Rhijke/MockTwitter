@@ -14,5 +14,9 @@
 
     </style>
 
+    <style name="RetweetButton" >
+        <item name="android:background">@drawable/states_retweet_btn</item>
+    </style>
+
     <color name="colorPrimary">#00acee</color>
 </resources>
