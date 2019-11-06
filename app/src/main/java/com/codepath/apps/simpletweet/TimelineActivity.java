@@ -36,6 +36,8 @@ import okhttp3.Headers;
 public class TimelineActivity extends AppCompatActivity {
     public static final String TAG ="TimelineActivity";
     private SwipeRefreshLayout swipeContainer;
+    // Store a member variable for the listener
+    private EndlessRecyclerViewScrollListener scrollListener;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -43,6 +45,8 @@ public class TimelineActivity extends AppCompatActivity {
     TweetDao tweetDao;
 
     public static final int REQUEST_CODE = 1990;
+    private long tweetUid;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -68,7 +72,8 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets = findViewById(R.id.rvTweets);
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(adapter);
         // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
@@ -79,12 +84,14 @@ public class TimelineActivity extends AppCompatActivity {
                 populateHomeTimeline();
             }
         });
-        // Configure the refreshing colors
-
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadMoreData();
+            }
+        };        // Adds the scroll listener to RecyclerView
+        rvTweets.addOnScrollListener(scrollListener);
 
         // Query for existing tweets in the DB
         AsyncTask.execute(new Runnable() {
@@ -99,6 +106,49 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
         populateHomeTimeline();
+    }
+
+    private void loadMoreData() {
+        // 1. Send an API request to retrieve appropriate paginated data
+        client.getNextPageOfTweets(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "Success " + json.toString());
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    // 2. Deserialize and construct new model objects from the API response
+                    final List<Tweet> tweetsFromNetwork =Tweet.fromJsonArray(jsonArray);
+                    // 3. Append the new data objects to the existing set of items inside the array of items
+                    adapter.addAll(tweetsFromNetwork);
+                    swipeContainer.setRefreshing(false);
+                    // Query for existing tweets in the DB
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i("DB", "Save data to DB");
+                            // Insert users
+                            List<User> usersFromNetwork = User.fromJsonArray(tweetsFromNetwork);
+                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                            // Insert tweets
+                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        }
+                    });
+                    tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
+                } catch (JSONException e) {
+                    Log.e(TAG, "json exception", e);
+                }
+                // 4. Notify the adapter of the new items made with `notifyItemRangeInserted()`
+                adapter.notifyItemRangeInserted(adapter.tweets.size()-26, 25);
+            }
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+
+            }
+        }, tweetUid);
+
+
+
+
     }
 
     public void onLogout(MenuItem mi) {
@@ -146,6 +196,7 @@ public class TimelineActivity extends AppCompatActivity {
                             tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
                         }
                     });
+                    tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
                 } catch (JSONException e) {
                     Log.e(TAG, "json exception", e);
                 }
