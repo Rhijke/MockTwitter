@@ -1,7 +1,7 @@
 # Project 2 - MockTwitter
 MockTwitter is an android app that allows a user to view his Twitter timeline. The app utilizes [Twitter REST API](https://dev.twitter.com/rest/public).
 
-Time spent: **3** hours spent in total
+Time spent: **5** hours spent in total
 ## User Stories
 
 The following **required** functionality is completed:
@@ -48,7 +48,7 @@ Here's a walkthrough of implemented user stories:
 
 - [Android Async HTTP](https://github.com/codepath/CPAsyncHttpClient) - Simple asynchronous HTTP requests with JSON parsing
 - [Glide](https://github.com/bumptech/glide) - Image loading and caching library for Android
-
+- [Flaticons](www.flaticon.com) - Retweet Icon made by [Freepik](https://www.flaticon.com/authors/freepik)
 ## User Stories
 
 The following **required** functionality is completed:
