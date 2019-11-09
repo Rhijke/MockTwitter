@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -83,6 +84,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvName;
         TextView tvCreatedAt;
         TextView tvFavCount, tvRtCount;
+        Button ivFavButton;
 
         public ViewHolder(@NonNull View itemView ) {
             super(itemView);
@@ -93,6 +95,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName = itemView.findViewById(R.id.tvName);
             tvFavCount = itemView.findViewById(R.id.tvFavCount);
             tvRtCount = itemView.findViewById(R.id.tvRtCount);
+            ivFavButton =  itemView.findViewById(R.id.favBtn);
         }
 
         public void bind(Tweet tweet) {
@@ -101,6 +104,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName.setText(tweet.user.name);
             tvRtCount.setText(String.valueOf(tweet.retweetCount));
             tvFavCount.setText(String.valueOf(tweet.favoriteCount));
+            if (tweet.favorited) {
+                ivFavButton.setBackgroundResource(R.drawable.ic_favorite);
+            }
             String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
             SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
             sf.setLenient(true);

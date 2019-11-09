@@ -90,6 +90,7 @@ public class TimelineActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.i(TAG, "load more data");
                 loadMoreData();
             }
         };        // Adds the scroll listener to RecyclerView
@@ -99,7 +100,6 @@ public class TimelineActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Log.i("TweetDB", "DATABSE");
                 List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
                 List<Tweet> tweetsFromDB = getTweetList(tweetWithUsers);
                 adapter.clear();
@@ -131,6 +131,8 @@ public class TimelineActivity extends AppCompatActivity {
                             tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
                             // Insert tweets
                             tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                            List<Tweet> list = getTweetList(tweetDao.recentItems());
+                            Log.i(TAG, list.get(list.size() - 1).body);
                         }
                     });
                     tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
@@ -201,8 +203,9 @@ public class TimelineActivity extends AppCompatActivity {
                     Log.i(TAG, list.get(0).body);
                 }
             });
-            Log.i("LastUser", tweetsFromNetwork.get(tweetsFromNetwork.size()-1).user.name);
-            tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
+            Log.i(TAG, tweetsFromNetwork.get(0).user.name + " " + tweetsFromNetwork.get(0).body);
+            // tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
+            tweetUid = tweetsFromNetwork.get(0).id;
         } catch (JSONException e) {
             Log.e(TAG, "json exception", e);
         }
