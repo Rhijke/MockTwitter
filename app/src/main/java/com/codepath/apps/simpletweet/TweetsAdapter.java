@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.simpletweet.models.Tweet;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.w3c.dom.Text;
 
@@ -26,16 +27,20 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.Headers;
+
 import static android.text.format.DateUtils.SECOND_IN_MILLIS;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     Context context;
     List<Tweet> tweets;
+    TwitterClient client;
     // Pass in the context and list of tweets
     public TweetsAdapter(Context context, List<Tweet> tweets) {
         this.context = context;
         this.tweets = tweets;
+        client = TwitterApplication.getRestClient(context);
     }
 
     // For each row, inflate the layout
@@ -50,7 +55,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Get the data
         Tweet tweet = tweets.get(position);
-        // Bind the tween with view hold
+        // Bind the tweet with view hold
         holder.bind(tweet);
     }
 
@@ -64,8 +69,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    // Add a list of items -- change to type used
-
+    // Add a list of items
     public void addAll(List<Tweet> tList) {
         tweets.addAll(tList );
         notifyDataSetChanged();
@@ -76,6 +80,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    // Notify data set changed when user updates a tweet
+    public void updateTweet() {
+        notifyDataSetChanged();
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivProfileImage;
@@ -96,21 +104,49 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvFavCount = itemView.findViewById(R.id.tvFavCount);
             tvRtCount = itemView.findViewById(R.id.tvRtCount);
             btFavorited =  itemView.findViewById(R.id.favBtn);
-            btRetweet = itemView.findViewById(R.id.btnTweet);
+            btRetweet = itemView.findViewById(R.id.rtBtn);
         }
 
-        public void bind(Tweet tweet) {
+        public JsonHttpResponseHandler getJsonHttpResponseHandler() {
+            return new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Headers headers, JSON json) {
+                    Log.i("Tweet", String.valueOf(statusCode));
+
+                }
+
+                @Override
+                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                    Log.i("Tweet", String.valueOf(statusCode));
+                    Log.i("Tweet", response);
+                }
+            };
+        }
+
+        public void bind(final Tweet tweet) {
             tvBody.setText(tweet.body);
             tvScreenName.setText("@"+tweet.user.screenName);
             tvName.setText(tweet.user.name);
             tvRtCount.setText(String.valueOf(tweet.retweetCount));
             tvFavCount.setText(String.valueOf(tweet.favoriteCount));
-            if (tweet.favorited) {
-                btFavorited.setBackgroundResource(R.drawable.ic_favorite);
-            }
-            if (tweet.retweeted) {
-                btRetweet.setBackgroundResource(R.drawable.ic_retweet_pressed);
-            }
+
+            // Handle favorite tweet
+            btFavorited.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // POST button click to twitter API
+                    Log.i("Tweet", String.valueOf(tweet.id));
+                    if (!tweet.favorited) {
+                        client.postFavoriteTweet(tweet.id, getJsonHttpResponseHandler());
+                    } else client.postUnFavoriteTweet(tweet.id, getJsonHttpResponseHandler());
+                    tweet.favorited = !tweet.favorited;
+                    notifyDataSetChanged();
+                }
+            });
+            // Change display of button depending if user already retweeted or favorited tweet
+            btFavorited.setBackgroundResource(tweet.favorited ? R.drawable.ic_favorite : R.drawable.ic_favorite_outline);
+            btRetweet.setBackgroundResource(tweet.retweeted ? R.drawable.ic_retweet_pressed : R.drawable.ic_retweet);
+            // Set relative time stamp
             String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
             SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
             sf.setLenient(true);
@@ -127,7 +163,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 e.printStackTrace();
             }
             tvCreatedAt.setText(relativeDate);
+
+            // Display user's twitter profile picture next to tweet
             Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
         }
+
+
     }
 }

@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletweet;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -54,6 +55,23 @@ public class TwitterClient extends OAuthBaseClient {
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
+		client.post(apiUrl, params,"",  handler);
+	}
+
+	public void postFavoriteTweet(Long tweetId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/create.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		Log.i("Tweet", "id: " + tweetId);
+		params.put("id", tweetId);
+		client.post(apiUrl, params,"",  handler);
+	}
+
+	public void postUnFavoriteTweet(Long tweetId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/destroy.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
 		client.post(apiUrl, params,"",  handler);
 	}
 
