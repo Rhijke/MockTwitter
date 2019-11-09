@@ -13,14 +13,14 @@ public class TweetWithUser {
     @Embedded(prefix = "tweet_")
     Tweet tweet;
 
-    public static List<Tweet>   getTweetList(List<TweetWithUser> tweetWithUsers) {
+    public static List<Tweet> getTweetList(List<TweetWithUser> tweetWithUsers) {
         List<Tweet> tweets = new ArrayList<>();
         for (int i =0; i < tweetWithUsers.size(); i++){
+            Log.i("TweetWithUser", tweetWithUsers.get(i).tweet.createAt);
             Tweet tweet = tweetWithUsers.get(i).tweet;
             tweet.user = tweetWithUsers.get(i).user;
             tweets.add(tweet);
         }
-
         return tweets;
     }
 }

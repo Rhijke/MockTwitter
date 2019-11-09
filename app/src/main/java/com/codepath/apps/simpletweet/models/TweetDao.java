@@ -10,7 +10,9 @@ import java.util.List;
 
 @Dao
 public interface TweetDao {
-    @Query("SELECT Tweet.body AS tweet_body, Tweet.createAt AS tweet_createAt, Tweet.id AS tweet_id, User.*" +
+    @Query("SELECT Tweet.favorited AS tweet_favorited, Tweet.retweeted AS tweet_retweeted, " +
+            "Tweet.favoriteCount AS tweet_favoriteCount, Tweet.retweetCount AS tweet_retweetCount, " +
+            "Tweet.body AS tweet_body, Tweet.createAt AS tweet_createAt, Tweet.id AS tweet_id, User.*" +
             " FROM Tweet INNER JOIN User ON Tweet.userId = User.id ORDER BY Tweet.createAt DESC LIMIT 300")
     List<TweetWithUser> recentItems();
 

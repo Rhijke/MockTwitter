@@ -26,6 +26,17 @@ public class Tweet {
     public long id;
     @ColumnInfo
     public long userId;
+    @ColumnInfo
+    public long favoriteCount;
+    @ColumnInfo
+    public long retweetCount;
+
+    @ColumnInfo
+    public boolean favorited;
+    @ColumnInfo
+    public boolean retweeted;
+
+
 
     // empty contructor needed by the Parceler library
     public Tweet() {}
@@ -35,6 +46,10 @@ public class Tweet {
         tweet.id = jsonObject.getLong("id");
         tweet.body = jsonObject.getString("text");
         tweet.createAt = jsonObject.getString("created_at");
+        tweet.favoriteCount = jsonObject.getLong("favorite_count");
+        tweet.retweetCount = jsonObject.getLong("retweet_count");
+        tweet.favorited = jsonObject.getBoolean("favorited");
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
         User user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.user = user;
         tweet.userId = user.id;

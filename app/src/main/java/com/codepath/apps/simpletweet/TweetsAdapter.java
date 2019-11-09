@@ -82,6 +82,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         TextView tvName;
         TextView tvCreatedAt;
+        TextView tvFavCount, tvRtCount;
 
         public ViewHolder(@NonNull View itemView ) {
             super(itemView);
@@ -90,12 +91,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
             tvName = itemView.findViewById(R.id.tvName);
+            tvFavCount = itemView.findViewById(R.id.tvFavCount);
+            tvRtCount = itemView.findViewById(R.id.tvRtCount);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
             tvScreenName.setText("@"+tweet.user.screenName);
             tvName.setText(tweet.user.name);
+            tvRtCount.setText(String.valueOf(tweet.retweetCount));
+            tvFavCount.setText(String.valueOf(tweet.favoriteCount));
             String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
             SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
             sf.setLenient(true);

@@ -33,6 +33,8 @@ import java.util.List;
 
 import okhttp3.Headers;
 
+import static com.codepath.apps.simpletweet.models.TweetWithUser.getTweetList;
+
 public class TimelineActivity extends AppCompatActivity {
     public static final String TAG ="TimelineActivity";
     private SwipeRefreshLayout swipeContainer;
@@ -97,10 +99,9 @@ public class TimelineActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Log.i("DB", "DATABSE");
+                Log.i("TweetDB", "DATABSE");
                 List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
-                List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
-
+                List<Tweet> tweetsFromDB = getTweetList(tweetWithUsers);
                 adapter.clear();
                 adapter.addAll(tweetsFromDB);
             }
@@ -113,11 +114,10 @@ public class TimelineActivity extends AppCompatActivity {
         client.getNextPageOfTweets(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "Success " + json.toString());
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     // 2. Deserialize and construct new model objects from the API response
-                    final List<Tweet> tweetsFromNetwork =Tweet.fromJsonArray(jsonArray);
+                    final List<Tweet> tweetsFromNetwork = Tweet.fromJsonArray(jsonArray);
                     // 3. Append the new data objects to the existing set of items inside the array of items
                     adapter.addAll(tweetsFromNetwork);
                     swipeContainer.setRefreshing(false);
@@ -142,23 +142,17 @@ public class TimelineActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-
+                Log.e("LoadMoreData", response);
             }
         }, tweetUid);
-
-
-
-
     }
 
     public void onLogout(MenuItem mi) {
-        Log.d("Logout", "Clicked logout");
         client.clearAccessToken();
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
     }
     public void onCompose(MenuItem mi) {
-        Log.d("Tweet", "Compose Tweet clicked");
         Intent i = new Intent(this, ComposeActivity.class);
         startActivityForResult(i, REQUEST_CODE);
     }
@@ -177,30 +171,7 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG, "Success " + json.toString());
-                JSONArray jsonArray = json.jsonArray;
-                try {
-                    final List<Tweet> tweetsFromNetwork =Tweet.fromJsonArray(jsonArray);
-                    adapter.clear();
-                    adapter.addAll(tweetsFromNetwork);
-                    swipeContainer.setRefreshing(false);
-                    // Query for existing tweets in the DB
-                    AsyncTask.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.i("DB", "Save data to DB");
-                            // Insert users
-                            List<User> usersFromNetwork = User.fromJsonArray(tweetsFromNetwork);
-                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
-                            // Insert tweets
-                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
-                        }
-                    });
-                    tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
-                } catch (JSONException e) {
-                    Log.e(TAG, "json exception", e);
-                }
-                adapter.notifyDataSetChanged();
+                handleData(json);
             }
 
             @Override
@@ -208,5 +179,33 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.i(TAG, "Failure " + response, throwable);
             }
         });
+    }
+
+    private void handleData(JsonHttpResponseHandler.JSON json) {
+        JSONArray jsonArray = json.jsonArray;
+        try {
+            final List<Tweet> tweetsFromNetwork = Tweet.fromJsonArray(jsonArray);
+            adapter.clear();
+            adapter.addAll(tweetsFromNetwork);
+            swipeContainer.setRefreshing(false);
+            // Query for existing tweets in the DB
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    // Insert users
+                    List<User> usersFromNetwork = User.fromJsonArray(tweetsFromNetwork);
+                    tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                    // Insert tweets
+                    tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                    List<Tweet> list = getTweetList(tweetDao.recentItems());
+                    Log.i(TAG, list.get(0).body);
+                }
+            });
+            Log.i("LastUser", tweetsFromNetwork.get(tweetsFromNetwork.size()-1).user.name);
+            tweetUid = tweetsFromNetwork.get(tweetsFromNetwork.size()-1).id;
+        } catch (JSONException e) {
+            Log.e(TAG, "json exception", e);
+        }
+        adapter.notifyDataSetChanged();
     }
 }
