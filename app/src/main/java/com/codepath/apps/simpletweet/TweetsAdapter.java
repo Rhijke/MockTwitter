@@ -84,7 +84,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvName;
         TextView tvCreatedAt;
         TextView tvFavCount, tvRtCount;
-        Button ivFavButton;
+        Button btFavorited, btRetweet;
 
         public ViewHolder(@NonNull View itemView ) {
             super(itemView);
@@ -95,7 +95,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName = itemView.findViewById(R.id.tvName);
             tvFavCount = itemView.findViewById(R.id.tvFavCount);
             tvRtCount = itemView.findViewById(R.id.tvRtCount);
-            ivFavButton =  itemView.findViewById(R.id.favBtn);
+            btFavorited =  itemView.findViewById(R.id.favBtn);
+            btRetweet = itemView.findViewById(R.id.btnTweet);
         }
 
         public void bind(Tweet tweet) {
@@ -105,7 +106,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRtCount.setText(String.valueOf(tweet.retweetCount));
             tvFavCount.setText(String.valueOf(tweet.favoriteCount));
             if (tweet.favorited) {
-                ivFavButton.setBackgroundResource(R.drawable.ic_favorite);
+                btFavorited.setBackgroundResource(R.drawable.ic_favorite);
+            }
+            if (tweet.retweeted) {
+                btRetweet.setBackgroundResource(R.drawable.ic_retweet_pressed);
             }
             String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
             SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
