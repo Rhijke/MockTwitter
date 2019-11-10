@@ -100,7 +100,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvName;
         TextView tvCreatedAt;
         TextView tvFavCount, tvRtCount;
-        Button btFavorited, btRetweet;
+        Button btFavorited, btRetweet, btShare;
 
         public ViewHolder(@NonNull View itemView ) {
             super(itemView);
@@ -113,6 +113,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRtCount = itemView.findViewById(R.id.tvRtCount);
             btFavorited =  itemView.findViewById(R.id.favBtn);
             btRetweet = itemView.findViewById(R.id.rtBtn);
+            btShare = itemView.findViewById(R.id.shareBtn);
         }
 
         public JsonHttpResponseHandler getJsonHttpResponseHandler() {
@@ -167,6 +168,18 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     }
                     tweet.retweeted = !tweet.retweeted;
                     notifyDataSetChanged();
+                }
+            });
+
+            btShare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                    sharingIntent.setType("text/plain");
+                    String shareBody = tweet.body;
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, tweet.user.name);
+                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                    context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 }
             });
             // Change display of button depending if user already retweeted or favorited tweet
