@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletweet;
 
 import android.content.Context;
+import android.text.Editable;
 import android.util.Log;
 
 import com.codepath.asynchttpclient.RequestParams;
@@ -62,7 +63,7 @@ public class TwitterClient extends OAuthBaseClient {
 		String apiUrl = getApiUrl("favorites/create.json");
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
-		Log.i("Tweet", "id: " + tweetId);
+		Log.i("Tweet", "Favorite id: " + tweetId);
 		params.put("id", tweetId);
 		client.post(apiUrl, params,"",  handler);
 	}
@@ -73,6 +74,7 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("id", tweetId);
 		client.post(apiUrl, params,"",  handler);
+		Log.i("Tweet", "Unfavorite");
 	}
 
 	public void getNextPageOfTweets(JsonHttpResponseHandler handler, long maxId) {
@@ -81,5 +83,25 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("count", 25);
 		params.put("max_id", maxId);
 		client.get(apiUrl, params, handler);
+	}
+
+    public void postRetweet(Long tweetId, JsonHttpResponseHandler handler) {
+		String url = "statuses/retweet/" + tweetId.toString();
+		String apiUrl = getApiUrl(url);
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		client.post(apiUrl, params,"",  handler);
+		Log.i("Tweet", "retweeted");
+    }
+
+	public void postUnRetweet(Long tweetId, JsonHttpResponseHandler handler) {
+		String url = "statuses/unretweet/" + tweetId.toString();
+		String apiUrl = getApiUrl(url);
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		client.post(apiUrl, params,"",  handler);
+		Log.i("Tweet", "Unretweeted");
 	}
 }

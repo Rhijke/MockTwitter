@@ -14,7 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Design.Light.NoActionBar">
-        <activity android:name=".ComposeActivity"></activity>
+        <activity android:name=".ComposeActivity" />
         <activity android:name=".TimelineActivity" />
         <activity
             android:name=".LoginActivity"

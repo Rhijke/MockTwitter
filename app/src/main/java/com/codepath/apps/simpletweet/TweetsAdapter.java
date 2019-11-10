@@ -1,9 +1,14 @@
 package com.codepath.apps.simpletweet;
 
 
+import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.Image;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -31,11 +37,13 @@ import okhttp3.Headers;
 
 import static android.text.format.DateUtils.SECOND_IN_MILLIS;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static org.parceler.Parcels.wrap;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     Context context;
     List<Tweet> tweets;
     TwitterClient client;
+
     // Pass in the context and list of tweets
     public TweetsAdapter(Context context, List<Tweet> tweets) {
         this.context = context;
@@ -112,7 +120,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 @Override
                 public void onSuccess(int statusCode, Headers headers, JSON json) {
                     Log.i("Tweet", String.valueOf(statusCode));
-
                 }
 
                 @Override
@@ -138,8 +145,27 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     Log.i("Tweet", String.valueOf(tweet.id));
                     if (!tweet.favorited) {
                         client.postFavoriteTweet(tweet.id, getJsonHttpResponseHandler());
-                    } else client.postUnFavoriteTweet(tweet.id, getJsonHttpResponseHandler());
+                        tweet.favoriteCount++;
+                    } else  {
+                        client.postUnFavoriteTweet(tweet.id, getJsonHttpResponseHandler());
+                        tweet.favoriteCount--;
+                    }
                     tweet.favorited = !tweet.favorited;
+                    notifyDataSetChanged();
+                }
+            });
+
+            btRetweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!tweet.retweeted){
+                        client.postRetweet(tweet.id, getJsonHttpResponseHandler());
+                        tweet.retweetCount++;
+                    } else {
+                        client.postUnRetweet(tweet.id, getJsonHttpResponseHandler());
+                        tweet.retweetCount--;
+                    }
+                    tweet.retweeted = !tweet.retweeted;
                     notifyDataSetChanged();
                 }
             });
@@ -167,7 +193,5 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             // Display user's twitter profile picture next to tweet
             Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
         }
-
-
     }
 }
